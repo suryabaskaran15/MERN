@@ -1,0 +1,14 @@
+{
+  "name": "MERN",
+  "version": "1.0.0",
+  "description": "MERN Practise",
+  "main": "index.js",
+  "workspaces":["client" , "server"],
+  "scripts": {
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "surya",
+  "license": "ISC"
+}
