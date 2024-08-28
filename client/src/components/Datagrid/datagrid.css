@@ -1,0 +1,141 @@
+/* Styling for the main table */
+.datagrifd2Table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+    background-color: #f8f9fa;
+}
+
+.datagrifd2Table-headerCell,
+.datagrifd2Table-cell {
+    padding: 12px 15px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Table rows */
+.datagrifd2Table-row:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.datagrifd2Table-row:hover {
+    background-color: #e9ecef;
+}
+
+/* No data message */
+.datagrifd2Table-noData {
+    text-align: center;
+    padding: 20px;
+    font-size: 18px;
+    color: #6c757d;
+}
+
+/* Pagination controls container */
+.tablePageControls-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Controls for navigating pages */
+.tablePageControls-goToStartEnd, .tablePageControls-prevNext {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+.tablePageControls-goToStartEnd:hover, .tablePageControls-prevNext:hover {
+    background-color: #e2e6ea;
+}
+
+/* Page count display */
+.tablePageControls-count {
+    margin: 0 10px;
+    font-size: 14px;
+}
+
+/* Input for page number */
+.tablePageControls-input {
+    width: 50px;
+    padding: 5px;
+    font-size: 14px;
+    text-align: center;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+/* Icon styling */
+.icon-new {
+    font-size: 16px;
+    margin: 0 2px;
+}
+
+.icon-blue {
+    color: #007bff;
+}
+
+.icon-chevron-left-grey {
+    content: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 fill%3D%22%23000000%22 height%3D%2218px%22 viewBox%3D%220 0 24 24%22 width%3D%2218px%22%3E%3Cpath d%3D%22M0 0h24v24H0z%22 fill%3D%22none%22/%3E%3Cpath d%3D%22M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z%22/%3E%3C/svg%3E');
+}
+
+.icon-chevron-right-grey {
+    content: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 fill%3D%22%23000000%22 height%3D%2218px%22 viewBox%3D%220 0 24 24%22 width%3D%2218px%22%3E%3Cpath d%3D%22M0 0h24v24H0z%22 fill%3D%22none%22/%3E%3Cpath d%3D%22M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z%22/%3E%3C/svg%3E');
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .datagrifd2Table-headerCell,
+    .datagrifd2Table-cell {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .tablePageControls-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .tablePageControls-count,
+    .tablePageControls-input {
+        margin-top: 10px;
+    }
+
+    .tablePageControls-goToStartEnd, .tablePageControls-prevNext {
+        padding: 4px 8px;
+    }
+
+    .icon-new {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .datagrifd2Table-headerCell,
+    .datagrifd2Table-cell {
+        padding: 5px;
+        font-size: 12px;
+    }
+
+    .tablePageControls-container {
+        align-items: center;
+    }
+
+    .tablePageControls-count,
+    .tablePageControls-input {
+        margin-top: 8px;
+        font-size: 12px;
+    }
+
+    .tablePageControls-goToStartEnd, .tablePageControls-prevNext {
+        padding: 3px 6px;
+    }
+
+    .icon-new {
+        font-size: 12px;
+    }
+}

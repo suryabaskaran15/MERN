@@ -10,11 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.13.0",
+    "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
-    "@mui/material": "^5.16.7",
+    "@mui/icons-material": "^6.0.0",
+    "@mui/material": "^6.0.0",
     "@tanstack/react-query": "^5.52.0",
+    "@tanstack/react-table": "^8.20.5",
     "axios": "^1.7.4",
+    "bootstrap": "^5.3.3",
     "dotenv": "^16.4.5",
     "final-form": "^4.20.10",
     "react": "^18.3.1",

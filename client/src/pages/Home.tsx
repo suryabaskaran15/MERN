@@ -1,5 +1,11 @@
+import Accounts from "../components/Accounts";
+
 const Home = () => {
-    return(<></>)
-}
+  return (
+    <>
+      <Accounts />
+    </>
+  );
+};
 
 export default Home;

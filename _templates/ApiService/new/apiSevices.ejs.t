@@ -33,15 +33,18 @@ interface <%- apiDetails.operationId %>Request {
   <% }) %>
 }
 
-interface <%- apiDetails.operationId %>Response {
-  <% 
-  const response = apiDetails.responses['200'] || apiDetails.responses['201'];
-  if (response && response.content && response.content['application/json']) {
-    Object.entries(response.content['application/json'].schema.properties).forEach(([key , object]) => { %>
-  <%- key %><%-object.optional && '?'%>: <%- object.type%>;
-  <% }) 
-  } %>
-}
+<% 
+const response = apiDetails.responses['200'] || apiDetails.responses['201'];
+if (response && response.content && response.content['application/json'] && response.content['application/json'].schema && response.content['application/json'].schema.properties) { %>
+  interface <%- apiDetails.operationId %>Response {
+    <% Object.entries(response.content['application/json'].schema.properties).forEach(([key , object]) => { %>
+      <%- key %><%- object.optional ? '?' : '' %>: <%- object.type %>;
+    <% }) %>
+  }
+<% } else { %>
+  type <%- apiDetails.operationId %>Response = <%-response.content['application/json'].schema.type ?? any%>;
+<% } %>
+
 
 const <%- operationId %> = (axios : AxiosInstance) => {
   const <%- queryType %> = (params : {body: <%- apiDetails.operationId %>Request}): Promise<AxiosResponse<<%- apiDetails.operationId %>Response>> => axios.<%- axiosMethod %>('<%- path %>', params.body);

@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.2
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false  # Disables security (no username/password required)
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g" # Sets the heap size
+      - http.cors.enabled=true
+      - http.cors.allow-origin=/.*/
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    networks:
+      - es-net
+
+networks:
+  es-net:
+    driver: bridge
+
+volumes:
+  esdata:
+    driver: local
