@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+// import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+// import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 export enum OrderByType {
     asc = "asc",
@@ -38,11 +38,11 @@ export function OrderComponent(props: OrderComponentProps) {
     };
 
     return (
-        <div onClick={sort} className="d-flex">
+        <div onClick={sort} className="d-flex" style={{cursor:"pointer"}}>
             <span>{props.title.toUpperCase()}</span>
             <div>
-                {orderBy === OrderByType.asc && <ArrowDropUpIcon />}
-                {orderBy === OrderByType.desc && <ArrowDropDownIcon />}
+                {/* {orderBy === OrderByType.asc && <ArrowDropUpIcon />}
+                {orderBy === OrderByType.desc && <ArrowDropDownIcon />} */}
             </div>
         </div>
     );

@@ -7,11 +7,17 @@ export enum Fields {
     LAST_NAME = "lastname",
     AGE = "age",
     BALANCE = "balance",
-    ACCOUNT_NUMBER = "account_number"
+    ACCOUNT_NUMBER = "account_number",
+    GENDER = "gender",
+    EMAIL= "email",
 }
 
 export interface FilterData {
-    [key: string]: string;
+    name?: string;
+    age?: Range;
+    balance?: Range;
+    gender?: { label: string;  value: 'm' | 'f'}[];
+    account_number?: number;
 }
 
 export interface SortType{

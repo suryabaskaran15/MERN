@@ -3,7 +3,9 @@ export enum Fields {
     FIRST_NAME = "firstname",
     LAST_NAME = "lastname",
     AGE = "age",
-    BALANCE = "balance"
+    BALANCE = "balance",
+    GENDER = "gender",
+    ACCOUNT_NUMBER = "account_number"
 }
 
 export enum OrderByType {
@@ -16,8 +18,17 @@ export interface UserCredentials {
     password: string;
 }
 
+export type Range = { gte?: number; lte?: number };
+export interface Filters {
+    name?: string;
+    age?: Range;
+    balance?: Range;
+    gender?: 'm' | 'f';
+    account_number?: number;
+}
+
 export interface SearchPayload {
-    filters?: { [key: string]: string };
+    filters?: Filters;
     sort?: {  [key: string]: OrderByType };
     pagination: { pageIndex: number, pageSize: number };
 }

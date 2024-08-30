@@ -8,7 +8,8 @@ const Login = () => {
     const navigate = useNavigate();
 
     const onSubmit = (values: FormValues) => {
-        client.loginUser.mutation({ body: { ...values } }).then(() => {
+        client.loginUser.mutation({ body: { ...values } }).then((res) => {
+            localStorage.setItem("token",res.data.token);
             navigate("/");
         });
     };

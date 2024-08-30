@@ -2,31 +2,51 @@ import { QueryDslQueryContainer, SearchResponse } from "@elastic/elasticsearch/l
 import elasticSearch from "../config/elasticSearch.config"
 import { Fields, SearchPayload } from "../types/type";
 
-export const getAccountsFromES = async ({ pagination, filters , sort }: SearchPayload): Promise<SearchResponse> => {
-    let mustClauses: QueryDslQueryContainer[] = [];
+export const getAccountsFromES = async ({ pagination, filters, sort }: SearchPayload): Promise<SearchResponse> => {
+    const NumberSortKeys = [Fields.AGE, Fields.ACCOUNT_NUMBER, Fields.BALANCE]
+    const mustClauses: QueryDslQueryContainer[] = [];
+    // const shouldClauses: QueryDslQueryContainer[] = [];
 
     if (filters) {
-        mustClauses = Object.entries(filters).map(([key, value]) => {
-            if (key === Fields.NAME) {
-                return {
-                    multi_match: {
-                        query: value as string,
-                        fields: [Fields.FIRST_NAME, Fields.LAST_NAME]
-                    }
-                };
-            } else if (key === Fields.AGE || key === Fields.BALANCE) {
-                return {
-                    range: {
-                        [key]: value as unknown as object
-                    }
-                }
+        Object.entries(filters).forEach(([key, value]) => {
+            switch (key) {
+                case Fields.NAME:
+                    mustClauses.push({
+                        multi_match: {
+                            query: value as string,
+                            fields: [Fields.FIRST_NAME, Fields.LAST_NAME],
+                        },
+                    });
+                    break;
+
+                case Fields.AGE:
+                case Fields.BALANCE:
+                    mustClauses.push({
+                        range: {
+                            [key]: value,
+                        },
+                    });
+                    break;
+
+                case Fields.GENDER:
+                    mustClauses.push({
+                        terms: {
+                            [key]: value?.map((d : string)=>d.toLowerCase()),
+                        },
+                    });
+                    break;
+
+                default:
+                    mustClauses.push({
+                        match: {
+                            [key]: value,
+                        },
+                    });
+                    break;
             }
-            return {
-                match: { [key]: value }
-            };
         });
     } else {
-        mustClauses = [{ match_all: {} }];
+        mustClauses.push({ match_all: {} });
     }
 
     const result = await elasticSearch.search({
@@ -34,14 +54,19 @@ export const getAccountsFromES = async ({ pagination, filters , sort }: SearchPa
         body: {
             query: {
                 bool: {
-                    must: [...mustClauses]
-                }
+                    must: mustClauses,
+                    // should: shouldClauses.length > 0 ? shouldClauses : undefined,
+                },
             },
-            sort: sort ? {[sort.name]:sort.direction}:undefined 
+            sort: sort ? {
+                [NumberSortKeys.includes(sort.name as any) ? sort.name : `${sort.name}.keyword`]: {
+                   order: sort.direction,
+                }
+            } : undefined,
         },
         from: (pagination.pageIndex - 1) * pagination.pageSize,
         size: pagination.pageSize,
     });
 
     return result;
-}
+};

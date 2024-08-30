@@ -4,11 +4,13 @@ import Datagrid, { SimpleColumn } from "./Datagrid/Datagrid";
 import { PaginationState } from "@tanstack/react-table";
 import AccountFilter from "./AccountFilter";
 import { OrderByType, OrderComponent } from "./OrderComponent";
-import { Fields, FilterData, SearchFilterProps, SortType } from "./type";
+import { Fields, FilterData, SortType } from "./type";
+import { getAccountsRequest } from "@/libs/apiClient";
 
 interface AccountTableData {
     account_number: string;
     name: string;
+    gender: string;
     firstname: string;
     lastname: string;
     age: number;
@@ -66,7 +68,33 @@ const Accounts: React.FC = () => {
         {
             id: "age",
             key: "age",
-            header: "Age",
+            header: () => (
+                <span className="notification-table-th">
+                    <OrderComponent
+                        title={Fields.AGE}
+                        selected={activeSort.current}
+                        orderByCallback={(value) => handleSorting(value, Fields.AGE)}
+                        name={Fields.AGE}
+                        order={sort?.direction}
+                    />
+                </span>
+            ),
+            cell: (value) => <>{value}</>,
+        },
+        {
+            id: "gender",
+            key: "gender",
+            header: () => (
+                <span className="notification-table-th">
+                    <OrderComponent
+                        title={Fields.GENDER}
+                        selected={activeSort.current}
+                        orderByCallback={(value) => handleSorting(value, Fields.GENDER)}
+                        name={Fields.GENDER}
+                        order={sort?.direction}
+                    />
+                </span>
+            ),
             cell: (value) => <>{value}</>,
         },
         {
@@ -78,7 +106,17 @@ const Accounts: React.FC = () => {
         {
             id: "balance",
             key: "balance",
-            header: "Balance",
+            header: () => (
+                <span className="notification-table-th">
+                    <OrderComponent
+                        title={Fields.BALANCE}
+                        selected={activeSort.current}
+                        orderByCallback={(value) => handleSorting(value, Fields.BALANCE)}
+                        name={Fields.BALANCE}
+                        order={sort?.direction}
+                    />
+                </span>
+            ),
             cell: (value) => <>{value}</>,
         },
         {
@@ -90,12 +128,12 @@ const Accounts: React.FC = () => {
     ];
 
     const onSearchSubmit = () => {
-        const payload: SearchFilterProps = {
+        const payload: getAccountsRequest = {
             pagination: { pageIndex: pagination.pageIndex + 1, pageSize: pagination.pageSize },
         };
 
         if (filters) {
-            payload.filters = { ...filters };
+            payload.filters = { ...filters , gender : filters?.gender?.map((d : {value: string})=>d.value) };
         }
         if (sort) {
             payload.sort = { ...sort };
@@ -122,9 +160,9 @@ const Accounts: React.FC = () => {
     }, [pagination, filters, sort]);
 
     return (
-        <div className="d-flex p-3">
+        <div className="flex m-3">
             <AccountFilter onSubmit={onSubmit} />
-            <div className="col-9">
+            <div className="ml5">
                 <Datagrid
                     data={data?.data?.data ?? []}
                     simpleColumns={columns}

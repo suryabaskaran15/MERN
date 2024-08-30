@@ -9,6 +9,9 @@ import {
     type PaginationState,
     type HeaderContext,
 } from "@tanstack/react-table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "../ui/pagination";
+import { Input } from "../ui/input";
 
 export interface SimpleColumn<T> {
     key: keyof T;
@@ -36,11 +39,11 @@ export default function DatagridV2<T extends RowData>({
     setPagination,
     isLoading = false,
 }: TableProps<T>) {
-    interface CustomColumnProperties<T> {
+    interface CustomColumnProperties {
         filterOptions?: Array<{ value: string; label: string }>;
     }
 
-    type ExtendedColumnDef<T> = ColumnDef<T> & CustomColumnProperties<T>;
+    type ExtendedColumnDef<T> = ColumnDef<T> & CustomColumnProperties;
 
     const columns: ExtendedColumnDef<T>[] = useMemo(
         () =>
@@ -67,93 +70,92 @@ export default function DatagridV2<T extends RowData>({
     return (
         <>
             <div className="table-responsive">
-                <table className="table table-striped table-bordered datagrifd2Table">
-                    <thead>
+                <Table className="table table-striped table-bordered datagrifd2Table">
+                    <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <tr key={headerGroup.id}>
+                            <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <th className="datagrifd2Table-headerCell" key={header.id}>
+                                    <TableHead className="datagrifd2Table-headerCell" key={header.id}>
                                         {flexRender(header.column.columnDef.header, header.getContext())}
-                                    </th>
+                                    </TableHead>
                                 ))}
-                            </tr>
+                            </TableRow>
                         ))}
-                    </thead>
+                    </TableHeader>
                     {isLoading ? (
-                        <tbody className="datagrifd2Table-body">
+                        <TableBody className="datagrifd2Table-body">
                             <tr>
                                 <td colSpan={table.getVisibleFlatColumns().length}>
                                     Loading....
                                 </td>
                             </tr>
-                        </tbody>
+                        </TableBody>
                     ) : (
-                        <tbody className="datagrifd2Table-body">
+                        <TableBody className="datagrifd2Table-body">
                             {table.getRowModel().rows.map((row) => (
-                                <tr className="datagrifd2Table-row" key={row.id}>
+                                <TableRow className="datagrifd2Table-row" key={row.id}>
                                     {row.getVisibleCells().map((cell) => (
-                                        <td className="datagrifd2Table-cell" key={cell.id}>
+                                        <TableCell className="datagrifd2Table-cell" key={cell.id}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </td>
+                                        </TableCell>
                                     ))}
-                                </tr>
+                                </TableRow>
                             ))}
-                        </tbody>
+                        </TableBody>
                     )}
-                </table>
+                </Table>
             </div>
             {!isLoading && data.length === 0 && <div className="datagrifd2Table-noData">{noResults}</div>}
             {table.getPageCount() > 1 && (
-                <div className="d-flex align-items-center justify-content-between mt-3 tablePageControls-container">
-                    <div className="d-flex">
-                        <div
-                            className="tablePageControls-goToStartEnd"
-                            onClick={() => {
-                                if (table.getCanPreviousPage()) table.firstPage();
-                            }}
-                        >
-                            <span className="icon-new icon-chevron-left-grey icon-blue icon-24" />
-                            <span className="icon-new icon-chevron-left-grey icon-blue icon-24" />
-                        </div>
-                        <div
-                            className="tablePageControls-prevNext"
-                            onClick={() => {
+                <Pagination className="d-flex align-items-center justify-content-between mt-3 tablePageControls-container">
+                    <PaginationContent>
+                        <PaginationItem className="d-flex">
+                            <div
+                                className="tablePageControls-goToStartEnd"
+                                onClick={() => {
+                                    if (table.getCanPreviousPage()) table.firstPage();
+                                }}
+                            >
+                                <span className="icon-new icon-chevron-left-grey icon-blue icon-24" />
+                                <span className="icon-new icon-chevron-left-grey icon-blue icon-24" />
+                            </div>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationPrevious onClick={() => {
                                 if (table.getCanPreviousPage()) table.previousPage();
-                            }}
-                        >
-                            <span className="icon-new icon-chevron-left-grey icon-blue icon-24" />
+                            }} />
+                        </PaginationItem>
+                        <PaginationItem className="tablePageControls-count">{`Page ${table.getState().pagination.pageIndex + 1} of ${table.getPageCount()}`}</PaginationItem>
+                        <PaginationItem className="d-flex">
+                            <PaginationNext
+                                className="tablePageControls-prevNext"
+                                onClick={() => {
+                                    if (table.getCanNextPage()) table.nextPage();
+                                }}
+                            >
+                                <span className="icon-new icon-chevron-right-grey icon-blue icon-24" />
+                            </PaginationNext>
+                            <PaginationItem
+                                className="tablePageControls-goToStartEnd"
+                                onClick={() => {
+                                    if (table.getCanNextPage()) table.lastPage();
+                                }}
+                            >
+                                <span className="icon-new icon-chevron-right-grey icon-blue icon-24" />
+                                <span className="icon-new icon-chevron-right-grey icon-blue icon-24" />
+                            </PaginationItem>
+                        </PaginationItem>
+                        <div className="tablePageControls-goTo">
+                            <Input
+                                className="form-control tablePageControls-input"
+                                defaultValue={table.getState().pagination.pageIndex + 1}
+                                type="number"
+                                min={1}
+                                max={table.getPageCount()}
+                            />
                         </div>
-                    </div>
-                    <div className="tablePageControls-count">{`Page ${table.getState().pagination.pageIndex + 1} of ${table.getPageCount()}`}</div>
-                    <div className="d-flex">
-                        <div
-                            className="tablePageControls-prevNext"
-                            onClick={() => {
-                                if (table.getCanNextPage()) table.nextPage();
-                            }}
-                        >
-                            <span className="icon-new icon-chevron-right-grey icon-blue icon-24" />
-                        </div>
-                        <div
-                            className="tablePageControls-goToStartEnd"
-                            onClick={() => {
-                                if (table.getCanNextPage()) table.lastPage();
-                            }}
-                        >
-                            <span className="icon-new icon-chevron-right-grey icon-blue icon-24" />
-                            <span className="icon-new icon-chevron-right-grey icon-blue icon-24" />
-                        </div>
-                    </div>
-                    <div className="tablePageControls-goTo">
-                        <input
-                            className="form-control tablePageControls-input"
-                            defaultValue={table.getState().pagination.pageIndex + 1}
-                            type="number"
-                            min={1}
-                            max={table.getPageCount()}
-                        />
-                    </div>
-                </div>
+                    </PaginationContent>
+                </Pagination>
             )}
         </>
     );

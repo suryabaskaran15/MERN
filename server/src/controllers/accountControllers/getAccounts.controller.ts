@@ -21,6 +21,10 @@ import { getAccountsFromES } from "../../services/accounts.service";
  *                 type: object
  *                 optional: true
  *                 description: Filter accounts by specific fields
+ *               sort:
+ *                 type: object
+ *                 optional: true
+ *                 description: Sorting Fields
  *               pagination:
  *                 type: object
  *                 properties:
