@@ -1,5 +1,5 @@
 import type { QueryDslQueryContainer, SearchResponse } from "@elastic/elasticsearch/lib/api/types";
-import elasticSearch from "../config/elasticSearch.config"
+import elasticSearch, { ESIndexName } from "../config/elasticSearch.config"
 import { Fields, type SearchPayload } from "../types/type";
 
 export const getAccountsFromES = async ({ pagination, filters, sort }: SearchPayload): Promise<SearchResponse> => {
@@ -51,7 +51,7 @@ export const getAccountsFromES = async ({ pagination, filters, sort }: SearchPay
     }
 
     const result = await elasticSearch.search({
-        index: 'accounts',
+        index: ESIndexName.Accounts,
         body: {
             query: {
                 bool: {
