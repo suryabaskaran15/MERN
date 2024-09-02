@@ -27,6 +27,18 @@ axios.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
+// Add a response interceptor to handle status codes
+axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 400) {
+            // Assuming you have a function to navigate to the login page
+            window.location.href = '/login';
+        }
+        return Promise.reject(error);
+    }
+);
+
 const client = Object.fromEntries(
     Object.entries(apiFunctions).map(([key, func]) => {
         const apiKey = key as api.ApiKey;
