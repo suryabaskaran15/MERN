@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-// import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-// import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { FaSortDown, FaSortUp } from "react-icons/fa6";
 
 export enum OrderByType {
     asc = "asc",
@@ -34,15 +33,16 @@ export function OrderComponent(props: OrderComponentProps) {
             state = OrderByType.desc;
         }
         setOrderBy(state);
-        props?.orderByCallback && props?.orderByCallback(state);
+        props?.orderByCallback?.(state);
     };
 
     return (
-        <div onClick={sort} className="d-flex" style={{cursor:"pointer"}}>
+        <div onClick={sort} className="flex" style={{cursor:"pointer"}}>
             <span>{props.title.toUpperCase()}</span>
             <div>
-                {/* {orderBy === OrderByType.asc && <ArrowDropUpIcon />}
-                {orderBy === OrderByType.desc && <ArrowDropDownIcon />} */}
+                {!orderBy && ""}
+                {orderBy === OrderByType.asc && <FaSortUp />}
+                {orderBy === OrderByType.desc && <FaSortDown />}
             </div>
         </div>
     );

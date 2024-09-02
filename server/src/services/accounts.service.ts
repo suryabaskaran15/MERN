@@ -1,6 +1,6 @@
-import { QueryDslQueryContainer, SearchResponse } from "@elastic/elasticsearch/lib/api/types";
+import type { QueryDslQueryContainer, SearchResponse } from "@elastic/elasticsearch/lib/api/types";
 import elasticSearch from "../config/elasticSearch.config"
-import { Fields, SearchPayload } from "../types/type";
+import { Fields, type SearchPayload } from "../types/type";
 
 export const getAccountsFromES = async ({ pagination, filters, sort }: SearchPayload): Promise<SearchResponse> => {
     const NumberSortKeys = [Fields.AGE, Fields.ACCOUNT_NUMBER, Fields.BALANCE]
@@ -8,6 +8,7 @@ export const getAccountsFromES = async ({ pagination, filters, sort }: SearchPay
     // const shouldClauses: QueryDslQueryContainer[] = [];
 
     if (filters) {
+        // biome-ignore lint/complexity/noForEach: <explanation>
         Object.entries(filters).forEach(([key, value]) => {
             switch (key) {
                 case Fields.NAME:
