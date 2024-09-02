@@ -1,5 +1,40 @@
 import mongoose, { type Document, Schema } from 'mongoose';
 
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     Account:
+ *       type: object
+ *       properties:
+ *         account_number:
+ *           type: number
+ *         balance:
+ *           type: number
+ *           format: float
+ *         firstname:
+ *           type: string
+ *         lastname:
+ *           type: string
+ *         age:
+ *           type: number
+ *         gender:
+ *           type: string
+ *           enum: ['M', 'F']
+ *         address:
+ *           type: string
+ *         employer:
+ *           type: string
+ *         email:
+ *           type: string
+ *         city:
+ *           type: string
+ *         state:
+ *           type: string
+ */
+
+
 export interface AccountType extends Document {
     account_number: number;
     balance: number;
