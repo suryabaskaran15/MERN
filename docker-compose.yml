@@ -18,10 +18,25 @@ services:
     networks:
       - es-net
 
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root  # Default MongoDB root username
+      - MONGO_INITDB_ROOT_PASSWORD=root  # Default MongoDB root password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+    networks:
+      - es-net
+
 networks:
   es-net:
     driver: bridge
 
 volumes:
   esdata:
+    driver: local
+  mongodata:
     driver: local
