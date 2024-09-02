@@ -8,7 +8,7 @@ import { useMutation, UseMutationOptions, useQuery } from "@tanstack/react-query
 
 export enum ApiKey {
   <%
-  Object.entries(jsonData.paths).forEach(([path, opData]) => {
+  Object.entries(paths).forEach(([path, opData]) => {
     Object.entries(opData).forEach(([method, apiDetails]) => {
   %>
   <%- apiDetails.operationId %> = "<%- apiDetails.operationId %>",
@@ -18,8 +18,15 @@ export enum ApiKey {
   %>
 }
 
+// Render the models
+<% Object.entries(models).forEach(([name, obj]) => {%>
+export interface <%= name %>Model {
+  <%- generateType(obj.properties, Object.entries(obj.properties).map(([key])=>key)) %>
+}
+<% }) %>
+
 <%
-Object.entries(jsonData.paths).forEach(([path, opData]) => {
+Object.entries(paths).forEach(([path, opData]) => {
   Object.entries(opData).forEach(([method, apiDetails]) => {
     const axiosMethod = method.toLowerCase();
     const isPostMethod = method === "post";
@@ -28,21 +35,28 @@ Object.entries(jsonData.paths).forEach(([path, opData]) => {
 %>
 
 export interface <%- apiDetails.operationId %>Request {
-  <% Object.entries(apiDetails.requestBody.content['application/json'].schema.properties).forEach(([key , object]) => { %>
-  <%- key %><%-object.optional && '?'%>: <%- object.type%>;
-  <% }) %>
+  <% 
+  const requestBodySchema = apiDetails.requestBody.content['application/json'].schema;
+  if (requestBodySchema && requestBodySchema.properties) {
+    const properties = requestBodySchema.properties;
+    const required = requestBodySchema.required || [];
+  %>
+  <%- generateType(properties, required) %>
+  <% } %>
 }
 
-<% 
-const response = apiDetails.responses['200'] || apiDetails.responses['201'];
-if (response && response.content && response.content['application/json'] && response.content['application/json'].schema && response.content['application/json'].schema.properties) { %>
- export interface <%- apiDetails.operationId %>Response {
-    <% Object.entries(response.content['application/json'].schema.properties).forEach(([key , object]) => { %>
-      <%- key %><%- object.optional ? '?' : '' %>: <%- object.type %>;
-    <% }) %>
-  }
+
+<%
+  const responseSchema = apiDetails.responses['200']?.content['application/json']?.schema;
+  if (responseSchema && responseSchema.properties) {
+    const properties = responseSchema.properties;
+    const required = responseSchema.required || [];
+%>
+export interface <%- apiDetails.operationId %>Response {
+  <%- generateType(properties, required) %>
+}
 <% } else { %>
- export type <%- apiDetails.operationId %>Response = <%-response.content['application/json'].schema.type ?? any%>;
+export type <%- apiDetails.operationId %>Response = any;
 <% } %>
 
 
@@ -60,7 +74,7 @@ const <%- operationId %> = (axios : AxiosInstance) => {
 
 export {
 <%
-Object.entries(jsonData.paths).forEach(([path, opData]) => {
+Object.entries(paths).forEach(([path, opData]) => {
   Object.entries(opData).forEach(([method, apiDetails]) => {
     const operationId = apiDetails.operationId || `${method}${path.replace(/[^a-zA-Z0-9]/g, '')}`;
 %>

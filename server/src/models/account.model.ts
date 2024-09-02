@@ -12,7 +12,7 @@ import mongoose, { type Document, Schema } from 'mongoose';
  *           type: number
  *         balance:
  *           type: number
- *           format: float
+ *           format: number
  *         firstname:
  *           type: string
  *         lastname:
