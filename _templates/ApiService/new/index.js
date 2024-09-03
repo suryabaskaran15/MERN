@@ -26,7 +26,7 @@ module.exports = {
               prop.required || [],
               level + 1
             )} }`;
-          }if (type === "Array" && prop.items) {
+          }if (type === "array" && prop.items) {
             return `${indent}${key}${
               required.includes(key) ? "" : "?"
             }: Array<${prop.items.$ref.replace(

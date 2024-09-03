@@ -34,6 +34,9 @@ import { loginUser } from '../../services/user.service';
  *           application/json:
  *             schema:
  *               type: object
+ *               required:
+ *                 - message
+ *                 - token
  *               properties:
  *                 message:
  *                   type: string

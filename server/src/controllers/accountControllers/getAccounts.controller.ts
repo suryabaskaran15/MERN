@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { getAccountsFromES } from "../../services/accounts.service";
 
+
 /**
  * @openapi
  * /accounts:
@@ -22,9 +23,12 @@ import { getAccountsFromES } from "../../services/accounts.service";
  *                 description: Filter accounts by specific fields
  *               sort:
  *                 type: object
- *                 description: Sorting Fields
+ *                 description: Sorting fields
  *               pagination:
  *                 type: object
+ *                 required:
+ *                   - pageIndex
+ *                   - pageCount
  *                 properties:
  *                   pageIndex:
  *                     type: number
@@ -41,9 +45,15 @@ import { getAccountsFromES } from "../../services/accounts.service";
  *           application/json:
  *             schema:
  *               type: object
+ *               required:
+ *                 - data
+ *                 - total
+ *                 - page
+ *                 - limit
+ *                 - pages
  *               properties:
  *                 data:
- *                   type: Array
+ *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/Account'
  *                 total:

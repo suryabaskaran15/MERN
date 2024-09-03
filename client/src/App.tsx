@@ -5,6 +5,7 @@ import './styles/form.css'
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import './index.css'
 import { ThemeProvider } from "./components/ThemeProvider"
+import { ToastProvider } from "./components/ui/toast"
 
 function App() {
   const queryClient = new QueryClient(); // For tan satck query
@@ -12,7 +13,9 @@ function App() {
     <>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
-          <RouterProvider router={router} />
+          <ToastProvider>
+            <RouterProvider router={router} />
+          </ToastProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </>
