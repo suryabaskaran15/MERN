@@ -67,6 +67,12 @@ export default function DatagridV2<T extends RowData>({
         manualPagination: true,
     });
 
+    const handleInputPageChange = (newPage: number) => {
+        if (newPage > 0 && newPage <= table.getPageCount()) {
+            table.setPageIndex(newPage - 1);
+        }
+    };
+
     return (
         <>
             <div className="table-responsive">
@@ -152,6 +158,7 @@ export default function DatagridV2<T extends RowData>({
                                 type="number"
                                 min={1}
                                 max={table.getPageCount()}
+                                onChange={(e) => handleInputPageChange(Number(e.target.value))}
                             />
                         </div>
                     </PaginationContent>

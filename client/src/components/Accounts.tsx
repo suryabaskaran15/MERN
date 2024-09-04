@@ -1,36 +1,52 @@
 import { useEffect, useRef, useState } from "react";
 import client from "../libs/client";
-import Datagrid, { SimpleColumn } from "./Datagrid/Datagrid";
-import { PaginationState } from "@tanstack/react-table";
+import Datagrid, { type SimpleColumn } from "./Datagrid/Datagrid";
+import type { PaginationState } from "@tanstack/react-table";
 import AccountFilter from "./AccountFilter";
-import { OrderByType, OrderComponent } from "./OrderComponent";
-import { Fields, FilterData, SortType } from "./type";
-import { getAccountsRequest } from "@/libs/apiClient";
-
-interface AccountTableData {
-    account_number: string;
-    name: string;
-    gender: string;
-    firstname: string;
-    lastname: string;
-    age: number;
-    email: string;
-    balance: number;
-    address: string;
-    city: string;
-    state: string;
-}
+import { type OrderByType, OrderComponent } from "./OrderComponent";
+import { type AccountTableData, Fields, type FilterData, type SortType } from "./type";
+import type { AccountModel, getAccountsRequest } from "@/libs/apiClient";
+import { MdDelete, MdEdit } from "react-icons/md";
+import AccountEditModel from "./AccountEditModel";
+import { Button } from "./ui/button";
+import { useToast } from "@/hooks/use-toast";
+import DeleteModel from "./model/DeleteModel";
 
 
 const Accounts: React.FC = () => {
-    const { data, mutate } = client.getAccounts.useMutation();
     const [filters, setFilters] = useState<FilterData | null>(null);
     const [sort, setSort] = useState<SortType | null>(null);
+    const [isEdit, setIsEdit] = useState(false);
+    const [isDelete, setIsDelete] = useState(false);
+    const [selectedAccount, setSelectedAccount] = useState<AccountTableData | null>(null);
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
         pageSize: 10,
     });
     const activeSort = useRef<string>('');
+    const {toast} = useToast();
+    const { data, mutate } = client.getAccounts.useMutation();
+    const {mutate: addAccountMutate} = client.AddNewAccount.useMutation({
+        onSuccess: (res) => {
+            handleAddEditModel();
+            onSearchSubmit();
+            toast({description:res.data.message})
+        }
+    });
+    const {mutate:UpdateAccountMutate} = client.UpdateAccount.useMutation({
+        onSuccess: (res) => {
+            handleAddEditModel();
+            onSearchSubmit();
+            toast({ description: res.data.message })
+        }
+    })
+    const {mutate: deleteAccountMutate} = client.DeleteAccount.useMutation({
+        onSuccess: (res) => {
+            handleDeleteModel();
+            onSearchSubmit();
+            toast({ description: res.data.message });
+        }
+    });
 
     const columns: SimpleColumn<AccountTableData>[] = [
         {
@@ -125,6 +141,25 @@ const Accounts: React.FC = () => {
             header: "Address",
             cell: (value, row) => <>{`${value}, ${row.city}, ${row.state}`}</>,
         },
+        {
+            id: "action",
+            key: "action",
+            header: "Action",
+            cell: (_,row) => (
+                <div className="flex">
+                    <MdEdit size={20} onClick={() => {
+                        setSelectedAccount(row); // Set the selected account
+                        setIsEdit(true); // Open the modal
+                    }}
+                    />
+                    <MdDelete size={20} onClick={() => {
+                        setSelectedAccount(row); 
+                        setIsDelete(true);
+                    }} />
+                </div>
+            )
+
+        }
     ];
 
     const onSearchSubmit = () => {
@@ -133,7 +168,7 @@ const Accounts: React.FC = () => {
         };
 
         if (filters) {
-            payload.filters = { ...filters , gender : filters?.gender?.map((d : {value: string})=>d.value) };
+            payload.filters = { ...filters, gender: filters?.gender?.map((d: { value: string }) => d.value) };
         }
         if (sort) {
             payload.sort = { ...sort };
@@ -155,6 +190,25 @@ const Accounts: React.FC = () => {
         activeSort.current = name;
     };
 
+    const addEditSubmit = (values:AccountModel)=>{
+        console.log(selectedAccount);
+        if(selectedAccount){
+            UpdateAccountMutate({body:{...values},id:selectedAccount._id});
+            return;
+        }
+        addAccountMutate({body:{...values}})
+    }
+
+    const handleAddEditModel = ()=>{
+        setIsEdit(false);
+        setSelectedAccount(null);
+    }
+
+    const handleDeleteModel = () => {
+        setIsDelete(false);
+        setSelectedAccount(null);
+    }
+
     useEffect(() => {
         onSearchSubmit();
     }, [pagination, filters, sort]);
@@ -163,15 +217,18 @@ const Accounts: React.FC = () => {
         <div className="flex m-3">
             <AccountFilter onSubmit={onSubmit} />
             <div className="ml5">
+                <Button className="float-end" onClick={()=>setIsEdit(true)}>Add  Account</Button>
                 <Datagrid
                     data={data?.data?.data ?? []}
-                    simpleColumns={columns}
+                    simpleColumns={columns as unknown as SimpleColumn<AccountModel>[]}
                     pagination={pagination}
                     setPagination={setPagination}
                     noResults="No data found"
-                    pageCount={10}
+                    pageCount={data?.data.pages ?? 0}
                 />
             </div>
+            {isEdit && <AccountEditModel isOpen={isEdit} onClose={handleAddEditModel} account={selectedAccount} onSave={addEditSubmit}/>}
+            {isDelete && <DeleteModel isDelete={isDelete} handleDeleteModel={handleDeleteModel} onDelete={() => deleteAccountMutate({id:selectedAccount?._id as string})}/> }
         </div>
     );
 };

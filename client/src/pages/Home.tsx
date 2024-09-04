@@ -1,4 +1,5 @@
 import NavBar from "@/components/NavBar";
+import { Toaster } from "@/components/ui/toaster";
 import { useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
@@ -10,6 +11,7 @@ const Home = () => {
       <>
         <NavBar />
         <Outlet />
+        <Toaster />
       </>
     ) : <Navigate to={"/login"} />}</>);
 

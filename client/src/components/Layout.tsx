@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from "react";
-import { ModeToggle } from "./ThemeToggler";
+import { ModeToggle } from "./theme/ThemeToggler";
 import { Toaster } from "./ui/toaster";
 
 interface LayoutProps {

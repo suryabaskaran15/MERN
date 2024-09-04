@@ -1,5 +1,6 @@
 import axiosLib, { type AxiosInstance } from "axios";
 import * as api from "./apiClient"; // Adjust the import path
+import { toast } from "@/hooks/use-toast";
 
 // Define the types for the API functions
 type ApiFunction<T> = T;
@@ -31,10 +32,14 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response && error.response.status === 400) {
+        if (error.response && error.response.status === 401) {
             // Assuming you have a function to navigate to the login page
             window.location.href = '/login';
         }
+        toast({
+            variant: "destructive",
+            description: `${error?.response.data.message ?? error?.message}`,
+        })
         return Promise.reject(error);
     }
 );

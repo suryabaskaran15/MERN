@@ -57,7 +57,7 @@ const accountSchema: Schema = new Schema({
     age: { type: Number, required: true },
     gender: { type: String, enum: ['M', 'F'], required: true },
     address: { type: String, required: true },
-    employer: { type: String, required: true },
+    employer: { type: String, default:null },
     email: { type: String, required: true },
     city: { type: String, required: true },
     state: { type: String, required: true },

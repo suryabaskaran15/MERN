@@ -29,21 +29,22 @@ export interface <%= name %>Model {
 Object.entries(paths).forEach(([path, opData]) => {
   Object.entries(opData).forEach(([method, apiDetails]) => {
     const axiosMethod = method.toLowerCase();
-    const isPostMethod = method === "post";
+    const isPostMethod = method === "get";
     const operationId = apiDetails.operationId || `${method}${path.replace(/[^a-zA-Z0-9]/g, '')}`;
-    const queryType = isPostMethod ? "mutation" : "query";
+    const queryType = !isPostMethod ? "mutation" : "query";
 %>
-
-export interface <%- apiDetails.operationId %>Request {
-  <% 
-  const requestBodySchema = apiDetails.requestBody.content['application/json'].schema;
-  if (requestBodySchema && requestBodySchema.properties) {
-    const properties = requestBodySchema.properties;
-    const required = requestBodySchema.required || [];
-  %>
-  <%- generateType(properties, required) %>
-  <% } %>
-}
+<% if(apiDetails?.requestBody && apiDetails.requestBody.content && apiDetails.requestBody.content['application/json']) { %>
+  export interface <%- apiDetails.operationId %>Request {
+    <% 
+    const requestBodySchema = apiDetails.requestBody.content['application/json'].schema;
+    if (requestBodySchema && requestBodySchema.properties) {
+      const properties = requestBodySchema.properties;
+      const required = requestBodySchema.required || [];
+    %>
+    <%- generateType(properties, required) %>
+    <% } %>
+  }
+<% } %>
 
 
 <%
@@ -61,12 +62,38 @@ export type <%- apiDetails.operationId %>Response = any;
 
 
 const <%- operationId %> = (axios : AxiosInstance) => {
-  const <%- queryType %> = (params : {body: <%- apiDetails.operationId %>Request}): Promise<AxiosResponse<<%- apiDetails.operationId %>Response>> => axios.<%- axiosMethod %>('<%- path %>', params.body);
+  const <%- queryType %> = (params: { 
+    <% if (apiDetails.requestBody) { %>
+      body: <%- apiDetails.operationId %>Request
+    <% } %>
+    <% if (apiDetails.parameters && apiDetails.parameters.length > 0) { %>
+      <%= apiDetails.requestBody ? ',' : '' %>
+      <%= apiDetails.parameters.map(param => `${param.name}: ${param.schema.type}`).join(', ') %>
+    <% } %>
+  }): Promise<AxiosResponse<<%- apiDetails.operationId %>Response>> => 
+  axios.<%- axiosMethod %>(
+    `<%- path.replace(/{/g, '${params.').replace(/}/g, '}') %>`,
+    <%- apiDetails?.requestBody ? 'params.body' : '' %>
+  );
 
-  return {
-    <%- queryType %>,
-    <%- isPostMethod ? "useMutation" : "useQuery" %>: (options?: Omit<UseMutationOptions<AxiosResponse<<%- apiDetails.operationId %>Response, any>, any,{body :<%- apiDetails.operationId %>Request}>, "mutationFn"> | undefined) => <%- isPostMethod ? "useMutation" : "useQuery" %>({...options ,<%- isPostMethod ? "mutationFn" : "queryFn"%> : <%- queryType %>,} || {})
-  };
+return {
+  <%- queryType %>,
+  <%- !isPostMethod ? "useMutation" : "useQuery" %>: (options?: Omit<
+    UseMutationOptions<
+      AxiosResponse<<%- apiDetails.operationId %>Response, any>, 
+      any, 
+      <% if (apiDetails?.requestBody) { %>
+        { body: <%- apiDetails.operationId %>Request }
+      <% } else { %>
+        any
+      <% } %>
+    >, 
+    "mutationFn"
+  > | undefined) => <%- !isPostMethod ? "useMutation" : "useQuery" %>({
+    ...options, 
+    <%- !isPostMethod ? "mutationFn" : "queryFn" %>: <%- queryType %>,
+  } || {})
+};
 };
 <% }); 
 }); 

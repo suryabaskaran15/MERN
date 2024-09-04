@@ -28,13 +28,13 @@ import { getAccountsFromES } from "../../services/accounts.service";
  *                 type: object
  *                 required:
  *                   - pageIndex
- *                   - pageCount
+ *                   - pageSize
  *                 properties:
  *                   pageIndex:
  *                     type: number
  *                     description: Page number
  *                     example: 1
- *                   pageCount:
+ *                   pageSize:
  *                     type: number
  *                     description: Page size
  *                     example: 10
@@ -85,15 +85,15 @@ const getAccounts = async (req: Request, res: Response) => {
 
     const total = typeof accounts.hits.total === 'number'
         ? accounts.hits.total
-        : accounts.hits.total?.value!;
-    const pages = total / req.body.pagination.pageCount;
+        : accounts.hits.total?.value as number;
+    const pages = total / req.body.pagination.pageSize;
 
     res.status(200).send({
-        data: accounts.hits.hits.map((account)=>account._source),
+        data: accounts.hits.hits.map((account)=>({ ... account._source as object ,_id : account._id  })),
         total: total,
         page: req.body.pagination.pageIndex,
         limit: req.body.pagination.pageCount,
-        pages: pages ?? 1
+        pages: Math.round(pages) ?? 1
     });
 }
 

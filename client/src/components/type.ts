@@ -1,5 +1,5 @@
-import { PaginationState } from "@tanstack/react-table";
-import { OrderByType } from "./OrderComponent";
+import type { PaginationState } from "@tanstack/react-table";
+import type { OrderByType } from "./OrderComponent";
 
 export enum Fields {
     NAME = "name",
@@ -29,4 +29,20 @@ export interface SearchFilterProps {
     filters?: FilterData;
     sort?: SortType;
     pagination: PaginationState;
+}
+
+export interface AccountTableData {
+    _id: string;
+    account_number: string;
+    name: string;
+    gender: string;
+    firstname: string;
+    lastname: string;
+    age: number;
+    email: string;
+    balance: number;
+    address: string;
+    city: string;
+    state: string;
+    action: string;
 }
