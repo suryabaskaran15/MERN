@@ -8,7 +8,7 @@ import { getAccountsFromES } from "../../services/accounts.service";
  *   post:
  *     operationId: getAccounts
  *     summary: Get Accounts
- *     tags: [accounts]
+ *     tags: [Accounts]
  *     requestBody:
  *       required: true
  *       content:
