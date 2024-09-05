@@ -5,6 +5,7 @@ to: <%-outDir%>
 /* eslint-disable react-hooks/rules-of-hooks */
 import { AxiosResponse , AxiosInstance } from "axios";
 import { useMutation, UseMutationOptions, useQuery } from "@tanstack/react-query";
+import z from "zod";
 
 export enum ApiKey {
   <%
@@ -20,9 +21,10 @@ export enum ApiKey {
 
 // Render the models
 <% Object.entries(models).forEach(([name, obj]) => {%>
-export interface <%= name %>Model {
+const  <%= name %>Model = z.object({
   <%- generateType(obj.properties, Object.entries(obj.properties).map(([key])=>key)) %>
-}
+})
+export type <%= name %>Model = z.infer<typeof <%= name %>Model>
 <% }) %>
 
 <%
@@ -34,7 +36,7 @@ Object.entries(paths).forEach(([path, opData]) => {
     const queryType = !isPostMethod ? "mutation" : "query";
 %>
 <% if(apiDetails?.requestBody && apiDetails.requestBody.content && apiDetails.requestBody.content['application/json']) { %>
-  export interface <%- apiDetails.operationId %>Request {
+  const <%- apiDetails.operationId %>Request = z.object({
     <% 
     const requestBodySchema = apiDetails.requestBody.content['application/json'].schema;
     if (requestBodySchema && requestBodySchema.properties) {
@@ -43,7 +45,8 @@ Object.entries(paths).forEach(([path, opData]) => {
     %>
     <%- generateType(properties, required) %>
     <% } %>
-  }
+  })
+  export type <%- apiDetails.operationId %>Request = z.infer<typeof <%- apiDetails.operationId %>Request>
 <% } %>
 
 
@@ -53,9 +56,10 @@ Object.entries(paths).forEach(([path, opData]) => {
     const properties = responseSchema.properties;
     const required = responseSchema.required || [];
 %>
-export interface <%- apiDetails.operationId %>Response {
+const <%- apiDetails.operationId %>Response = z.object({
   <%- generateType(properties, required) %>
-}
+})
+export type <%- apiDetails.operationId %>Response = z.infer<typeof <%- apiDetails.operationId %>Response>
 <% } else { %>
 export type <%- apiDetails.operationId %>Response = any;
 <% } %>
@@ -70,12 +74,14 @@ const <%- operationId %> = (axios : AxiosInstance) => {
       <%= apiDetails.requestBody ? ',' : '' %>
       <%= apiDetails.parameters.map(param => `${param.name}: ${param.schema.type}`).join(', ') %>
     <% } %>
-  }): Promise<AxiosResponse<<%- apiDetails.operationId %>Response>> => 
-  axios.<%- axiosMethod %>(
-    `<%- path.replace(/{/g, '${params.').replace(/}/g, '}') %>`,
-    <%- apiDetails?.requestBody ? 'params.body' : '' %>
-  );
-
+  }): Promise<AxiosResponse<<%- apiDetails.operationId %>Response>> => {
+return axios.<%- axiosMethod %>(
+  `<%- path.replace(/{/g, '${params.').replace(/}/g, '}') %>`,
+  <% if (apiDetails.requestBody) { %>
+    z.object({ body: <%- apiDetails.operationId %>Request }).parse(params).body
+  <% } %>
+);
+  }
 return {
   <%- queryType %>,
   <%- !isPostMethod ? "useMutation" : "useQuery" %>: (options?: Omit<
