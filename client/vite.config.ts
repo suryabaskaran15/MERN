@@ -14,6 +14,7 @@ export default defineConfig({
   },
   server: {
     port: Number(process.env.VITE_CLIENT_PORT),
+    host: '0.0.0.0'
   },
   preview: {
     port: Number(process.env.VITE_CLIENT_PORT),

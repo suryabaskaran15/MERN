@@ -6,8 +6,8 @@ services:
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
-      - xpack.security.enabled=false  # Disables security (no username/password required)
-      - "ES_JAVA_OPTS=-Xms1g -Xmx1g" # Sets the heap size
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
       - http.cors.enabled=true
       - http.cors.allow-origin=/.*/
     ports:
@@ -22,12 +22,38 @@ services:
     image: mongo:7.0
     container_name: mongodb
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root  # Default MongoDB root username
-      - MONGO_INITDB_ROOT_PASSWORD=root  # Default MongoDB root password
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
     ports:
       - "27017:27017"
     volumes:
       - mongodata:/data/db
+    networks:
+      - es-net
+  
+  server:
+    build:
+      context: ./server
+    ports:
+      - "3016:3016"
+    env_file:
+      - .env
+    volumes:
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - es-net
+    
+  client:
+    build: 
+      context: ./client
+    ports:
+      - "3015:3015"
+    env_file:
+      - .env
+    volumes:
+      - ./client:/usr/src/app
+      - /usr/src/app/node_modules # Ensure node_modules is not overwritten by volume
     networks:
       - es-net
 

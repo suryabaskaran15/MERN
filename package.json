@@ -3,10 +3,6 @@
   "version": "1.0.0",
   "description": "MERN Practise",
   "main": "index.js",
-  "workspaces": [
-    "client",
-    "server"
-  ],
   "scripts": {
     "build:client":"cd client && npm run build",
     "build:server": "cd server && npm run build",
