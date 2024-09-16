@@ -17,6 +17,10 @@ services:
       - esdata:/usr/share/elasticsearch/data
     networks:
       - es-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.elasticsearch.rule=Host(`elasticsearch.localhost`)"
+      - "traefik.http.services.elasticsearch.loadbalancer.server.port=9200"
 
   mongodb:
     image: mongo:7.0
@@ -30,12 +34,37 @@ services:
       - mongodata:/data/db
     networks:
       - es-net
-  
+
+  traefik:
+    image: traefik:v2.7
+    container_name: traefik
+    ports:
+      - "80:80"   # HTTP port
+      - "443:443" # HTTPS port
+      - "8080:8080" # Traefik dashboard
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./letsencrypt:/letsencrypt"
+    networks:
+      - es-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+
   server:
     build:
       context: ./server
     ports:
       - "3016:3016"
+    depends_on:
+      - mongodb
+      - elasticsearch
     env_file:
       - .env
     volumes:
@@ -43,19 +72,29 @@ services:
       - /usr/src/app/node_modules
     networks:
       - es-net
-    
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.server.rule=Host(`api.mern.localhost`)"
+      - "traefik.http.services.server.loadbalancer.server.port=3016"
+
   client:
     build: 
       context: ./client
     ports:
       - "3015:3015"
+    depends_on:
+      - traefik
     env_file:
       - .env
     volumes:
       - ./client:/usr/src/app
-      - /usr/src/app/node_modules # Ensure node_modules is not overwritten by volume
+      - /usr/src/app/node_modules
     networks:
       - es-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.client.rule=Host(`portal.dev.mern.localhost`)"
+      - "traefik.http.services.client.loadbalancer.server.port=3015"
 
 networks:
   es-net:
