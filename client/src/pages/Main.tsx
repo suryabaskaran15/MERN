@@ -63,7 +63,7 @@ const Main = () => {
                 </div>
 
                 <div className="flex flex-col items-center">
-                    <div
+                    {!isCameraOpen && (<div
                         className="w-40 h-40 rounded-full overflow-hidden border-8 border-gray-300 bg-gray-200 mb-6 shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-in-out cursor-pointer relative"
                         onDrop={handleDrop}
                         onDragOver={handleDragOver}
@@ -80,15 +80,18 @@ const Main = () => {
                                 <span className="text-gray-500 text-sm">Drag & Drop</span>
                             </div>
                         )}
-                    </div>
+                    </div>)}
 
                     {/* Camera functionality */}
                     {isCameraOpen ? (
                         <div className="text-center">
                             <video ref={videoRef} autoPlay className="w-40 h-40 rounded-full mb-4 shadow-lg"></video>
                             <canvas ref={canvasRef} className="hidden"></canvas>
-                            <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white mb-2" onClick={capturePhoto}>
-                                Capture Photo
+                            <Button
+                                onClick={capturePhoto}
+                                className="w-16 h-16 rounded-full bg-blue-500 hover:bg-blue-600 text-white flex justify-center items-center mx-auto shadow-lg mb-2"
+                            >
+                                <FiCamera size={25} />
                             </Button>
                             <Button className="w-full bg-red-500 hover:bg-red-600 text-white" onClick={closeCamera}>
                                 Close Camera
