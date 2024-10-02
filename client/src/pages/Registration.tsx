@@ -1,11 +1,9 @@
-import AuthenticationForm from "../components/form/AuthenticationForm";
 import { Link } from "react-router-dom";
-import { Card } from "@/components/ui/card";
 import { Field, Form } from "react-final-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FcGoogle } from "react-icons/fc";
-import { ModeToggle } from "@/components/ThemeToggler";
+import { ModeToggle } from "@/components/theme/ThemeToggler";
 
 const Registration = () => {
     return (
