@@ -3,15 +3,13 @@
   "version": "1.0.0",
   "description": "MERN Practise",
   "main": "index.js",
-  "workspaces": [
-    "client",
-    "server"
-  ],
   "scripts": {
     "build:client":"cd client && npm run build",
     "build:server": "cd server && npm run build",
     "dev:client": "cd client && npm run dev",
     "dev:server": "cd server && npm run dev",
+    "staging:client":"cd client && npm run preview",
+    "staging:server": "cd server && npm run start",
     "client:generate": "cd server && npm run api:generate && cd .. && HYGEN_OVERWRITE=1 hygen ApiService new --jsonData ./client/temp/api.json --outDir ./client/src/libs/apiClient.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

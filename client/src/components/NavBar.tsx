@@ -1,4 +1,4 @@
-import { ModeToggle } from "./ThemeToggler";
+import { ModeToggle } from "./theme/ThemeToggler";
 
 const NavBar = () => {
     return (

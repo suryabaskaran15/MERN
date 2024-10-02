@@ -38,6 +38,8 @@ import { createNewUser } from "../../services/user.service";
  *           application/json:
  *             schema:
  *               type: object
+ *               requried:
+ *                 - message
  *               properties:
  *                 message:
  *                   type: string
