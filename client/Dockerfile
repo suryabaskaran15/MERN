@@ -1,5 +1,5 @@
 # Dockerfile in /client
-FROM node:19.9
+FROM node:20.17.0
 
 # Set the working directory
 WORKDIR /usr/src/app

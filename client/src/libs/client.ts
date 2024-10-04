@@ -14,7 +14,7 @@ type Client = {
     [key in api.ApiKey]: ReturnType<typeof api[key]>;
 };
 
-const axios = axiosLib.create({ baseURL: import.meta.env.VITE_API_BASE_URL });
+const axios = axiosLib.create({ baseURL: import.meta.env.VITE_API_BASE_URL , withCredentials:true });
 
 // Add an interceptor to include the auth token
 axios.interceptors.request.use(
@@ -34,7 +34,7 @@ axios.interceptors.response.use(
     (error) => {
         if (error.response && error.response.status === 401) {
             // Assuming you have a function to navigate to the login page
-            window.location.href = '/login';
+            // window.location.href = '/login';
         }
         toast({
             variant: "destructive",

@@ -1,7 +1,7 @@
 import { MongooseError } from "mongoose";
 import userModel from "../models/user.model";
 import bcrypt from "bcrypt";
-import { generateToken } from "../utils/jwtToken";
+import { generateToken, verifyToken } from "../utils/jwtToken";
 import { UserCredentials } from "../types/type";
 
 const createNewUser = async (user: UserCredentials) => {
@@ -29,4 +29,10 @@ const loginUser = async ({ email, password }: UserCredentials) => {
     return isMatch ? generateToken(user) : null;
 }
 
-export { createNewUser, loginUser };
+const getUserDetails = async (token: string): Promise<any> => {
+    const decoded = await verifyToken(token);
+    console.log(decoded)
+    return decoded;
+}
+
+export { createNewUser, loginUser, getUserDetails };
