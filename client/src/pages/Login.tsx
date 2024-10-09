@@ -1,13 +1,19 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Field, Form } from "react-final-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FcGoogle } from "react-icons/fc";
 import { ModeToggle } from "@/components/theme/ThemeToggler";
+import CLIENT from "@/libs/axios";
 
 
 const Login = () => {
-
+    const navigate = useNavigate();
+    const onSubmit = (value) => {
+        CLIENT.post("/auth/login", value).then(() => {
+            navigate("/")
+        })
+}
     return (
         <div className="relative flex">
             <div className="absolute top-4 right-4">
@@ -25,7 +31,7 @@ const Login = () => {
                         Please log in to your account
                         </span>
                         <Form
-                            onSubmit={() => { }}
+                            onSubmit={onSubmit}
                             initialValues={{ email: "", password: "" }}
                             render={({ handleSubmit, form, submitting, }) => (
                                 <form onSubmit={handleSubmit}>
@@ -81,7 +87,7 @@ const Login = () => {
                             <div className="flex-grow border-t border-gray-300"></div>
                         </div>
                         <div className="flex justify-center mt-4">
-                            <FcGoogle size={20}/>
+                            {/* <FcGoogle size={20}/> */}
                         </div>
                         <p className="text-center mt-4 text-sm">
                         Don't have an account?{" "}

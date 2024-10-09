@@ -31,7 +31,6 @@ const loginUser = async ({ email, password }: UserCredentials) => {
 
 const getUserDetails = async (token: string): Promise<any> => {
     const decoded = await verifyToken(token);
-    console.log(decoded)
     return decoded;
 }
 

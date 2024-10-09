@@ -4,16 +4,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FcGoogle } from "react-icons/fc";
 import { ModeToggle } from "@/components/theme/ThemeToggler";
-import axios from "axios";
+import CLIENT from "@/libs/axios";
 
 const Registration = () => {
-    const API_URL = 'http://localhost:3016/api/auth';
-    axios.defaults.withCredentials = true;
-
-    axios.get("http://localhost:3016/api/auth/ping",{withCredentials:true})
-    const googleAuth = () => {
-        window.open(`${API_URL}/google`, '_self');
-    };
+    // const API_URL = 'http://localhost:3016/api/auth';
+    // const googleAuth = () => {
+    //     window.open(`${API_URL}/google`, '_self');
+    // };
+    const onSubmit = (value) => {
+        CLIENT.post("/auth/signup",value);
+    }
     return (
         <div className="relative flex">
             {/* ModeToggle positioned at the top-right */}
@@ -37,7 +37,7 @@ const Registration = () => {
                     </span>
 
                     <Form
-                        onSubmit={() => { }}
+                        onSubmit={onSubmit}
                         initialValues={{ email: "", password: "" }}
                         render={({ handleSubmit, form, submitting, }) => (
                             <form onSubmit={handleSubmit}>
@@ -112,7 +112,7 @@ const Registration = () => {
                     </div>
 
                     <div className="flex justify-center mt-4">
-                        <FcGoogle size={20} onClick={googleAuth}/>
+                        {/* <FcGoogle size={20} onClick={googleAuth}/> */}
                     </div>
 
                     <p className="text-center mt-4 text-sm">
