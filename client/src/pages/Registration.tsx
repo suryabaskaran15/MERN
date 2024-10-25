@@ -1,18 +1,21 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Field, Form } from "react-final-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FcGoogle } from "react-icons/fc";
+// import { FcGoogle } from "react-icons/fc";
 import { ModeToggle } from "@/components/theme/ThemeToggler";
 import CLIENT from "@/libs/axios";
 
 const Registration = () => {
+    const navigate = useNavigate();
     // const API_URL = 'http://localhost:3016/api/auth';
     // const googleAuth = () => {
     //     window.open(`${API_URL}/google`, '_self');
     // };
-    const onSubmit = (value) => {
-        CLIENT.post("/auth/signup",value);
+    const onSubmit = (value: { email: string; password: string; userName:string}) => {
+        CLIENT.post("/auth/signup", value).then(() => {
+            navigate('/login');
+        });
     }
     return (
         <div className="relative flex">
