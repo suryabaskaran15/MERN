@@ -7,9 +7,12 @@ export interface UserType extends Document {
 }
 
 const userSchema: Schema = new Schema({
-    email: { type: String, required: true  , unique:true},
-    password: { type: String, required: true },
-    name: { type: String },
+    userName: { type: String, required: true , unique: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String },
+    googleId: { type: String,  },
+    avatar: { type: String }, // for Google profile picture
+    createdAt: { type: Date, default: Date.now }
 });
 
 export default mongoose.model<UserType>('user', userSchema);

@@ -1,41 +1,133 @@
-import type { FormValues } from "./types";
-import AuthenticationForm from "../components/form/AuthenticationForm";
 import { Link, useNavigate } from "react-router-dom";
-import client from "../libs/client";
-import { Card } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
-import Layout from "@/components/Layout";
+import { Field, Form } from "react-final-form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+// import { FcGoogle } from "react-icons/fc";
+import { ModeToggle } from "@/components/theme/ThemeToggler";
+import CLIENT from "@/libs/axios";
 
 const Registration = () => {
     const navigate = useNavigate();
-    const { toast } = useToast();
-
-    const onSubmit = (values: FormValues) => {
-        client.signUpUser.mutation({ body: values }).then(() => {
-            navigate("/login")
-        }).catch((res) => {
-            toast({
-                variant: "destructive",
-                description: `${res?.response.data.message}`,
-            })
+    // const API_URL = 'http://localhost:3016/api/auth';
+    // const googleAuth = () => {
+    //     window.open(`${API_URL}/google`, '_self');
+    // };
+    const onSubmit = (value: { email: string; password: string; userName:string}) => {
+        CLIENT.post("/auth/signup", value).then(() => {
+            navigate('/login');
         });
-    };
+    }
     return (
-        <Layout>
-        <Card className="flex items-center justify-center min-h-screen">
-            <div className="w-72 p-6 shadow-md rounded-md">
-                <h1 className="text-2xl text-center font-semibold mb-4">Sign Up</h1>
-                <AuthenticationForm onSubmit={onSubmit} />
-                <p className="text-center mt-4 text-sm">
-                    Already have an account?{" "}
-                    <Link to="/login" className="text-blue-500">
-                        Login
-                    </Link>
-                </p>
+        <div className="relative flex">
+            {/* ModeToggle positioned at the top-right */}
+            <div className="absolute top-4 right-4">
+                <ModeToggle />
             </div>
-        </Card>
-        </Layout>
-    )
+
+            {/* Left container with the image */}
+            <div className="left-container hidden lg:block lg:w-1/2">
+                <img src="../../public/pixlr-image-generator-5c906bca-84f6-417e-b692-00c4cd5a56be.png" alt="registration" />
+            </div>
+
+            {/* Right container with the registration form */}
+            <div className="right-container w-full lg:w-1/2 flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <h1 className="text-2xl font-semibold mb-4">
+                        Create an account
+                    </h1>
+                    <span className="block whitespace-nowrap mb-6">
+                        Enter your email below to create your account
+                    </span>
+
+                    <Form
+                        onSubmit={onSubmit}
+                        initialValues={{ email: "", password: "" }}
+                        render={({ handleSubmit, form, submitting, }) => (
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-4">
+                                    <Field
+                                        name="userName"
+                                        render={({ input, meta }) => (
+                                            <>
+                                                <Input
+                                                    {...input}
+                                                    type="text"
+                                                    placeholder="name123"
+                                                />
+                                                {meta.error && meta.touched && (
+                                                    <span className="text-red-500">{meta.error}</span>
+                                                )}
+                                            </>
+                                        )}
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <Field
+                                        name="email"
+                                        render={({ input, meta }) => (
+                                            <>
+                                                <Input
+                                                    {...input}
+                                                    type="email"
+                                                    placeholder="name@example.com"
+                                                />
+                                                {meta.error && meta.touched && (
+                                                    <span className="text-red-500">{meta.error}</span>
+                                                )}
+                                            </>
+                                        )}
+                                    />
+                                </div>
+                                <div className="mb-6">
+                                    <Field
+                                        name="password"
+                                        render={({ input, meta }) => (
+                                            <>
+                                                <Input
+                                                    {...input}
+                                                    type="password"
+                                                    placeholder="Enter your Password"
+                                                />
+                                                {meta.error && meta.touched && (
+                                                    <span className="text-red-500">{meta.error}</span>
+                                                )}
+                                            </>
+                                        )}
+                                    />
+                                </div>
+                                <div className="flex justify-center mt-4">
+                                    <Button
+                                        type="submit"
+                                        className="login-field"
+                                        disabled={submitting}
+                                    >
+                                        SignUp with Email
+                                    </Button>
+                                </div>
+                            </form>
+                        )}
+                    />
+
+                    <div className="flex items-center my-6">
+                        <div className="flex-grow border-t border-gray-300"></div>
+                        <span className="mx-4 text-gray-500">Or continue with</span>
+                        <div className="flex-grow border-t border-gray-300"></div>
+                    </div>
+
+                    <div className="flex justify-center mt-4">
+                        {/* <FcGoogle size={20} onClick={googleAuth}/> */}
+                    </div>
+
+                    <p className="text-center mt-4 text-sm">
+                        Already have an account?{" "}
+                        <Link to="/login" className="text-blue-500">
+                            Login
+                        </Link>
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
 }
 
 export default Registration;

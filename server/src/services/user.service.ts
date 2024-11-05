@@ -1,7 +1,7 @@
 import { MongooseError } from "mongoose";
 import userModel from "../models/user.model";
 import bcrypt from "bcrypt";
-import { generateToken } from "../utils/jwtToken";
+import { generateToken, verifyToken } from "../utils/jwtToken";
 import { UserCredentials } from "../types/type";
 
 const createNewUser = async (user: UserCredentials) => {
@@ -12,9 +12,15 @@ const createNewUser = async (user: UserCredentials) => {
             await newUser.save();
             return newUser;
         } catch (err: any) {
-            const message = (err instanceof MongooseError || err.code === 11000)
-                ? "Email Already exsists !"
-                : "Unable to create user";
+            let message = "unable to create user";
+            if (err instanceof MongooseError || err.code === 11000) {
+                if (err?.keyPattern?.userName) {
+                    message = "Username already exists";
+                }
+                if (err?.keyPattern?.email) {
+                    message = "Email already exists";
+                }
+            }
             throw new Error(message);
         }
     }
@@ -29,4 +35,9 @@ const loginUser = async ({ email, password }: UserCredentials) => {
     return isMatch ? generateToken(user) : null;
 }
 
-export { createNewUser, loginUser };
+const getUserDetails = async (token: string): Promise<any> => {
+    const decoded = await verifyToken(token);
+    return decoded;
+}
+
+export { createNewUser, loginUser, getUserDetails };

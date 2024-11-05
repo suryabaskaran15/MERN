@@ -6,3 +6,7 @@ export const generateToken = (userDetails : object)=>{
         expiresIn: '1D',
     });
 }
+
+export const verifyToken = (token : string) => {
+    return jwt.verify(token, JWT_SECRET)
+}

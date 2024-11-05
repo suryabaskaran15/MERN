@@ -35,6 +35,16 @@ services:
     networks:
       - es-net
 
+  redis:
+    image: redis:7.0
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - es-net
+    volumes:
+      - redisdata:/data
+
   traefik:
     image: traefik:v2.7
     container_name: traefik
@@ -104,4 +114,6 @@ volumes:
   esdata:
     driver: local
   mongodata:
+    driver: local
+  redisdata:
     driver: local

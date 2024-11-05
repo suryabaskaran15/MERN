@@ -59,15 +59,14 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const { email, password } = req.body;
 
     try {
-        const token = await loginUser({email , password});
+        const token = await loginUser({ email, password });
         if (!token) {
             res.status(401).json({ message: 'Invalid email or password' });
             return;
         }
-
+        (req.session as any & { token?: string }).token = token;
         res.status(200).json({
-            message: 'Login successful',
-            token
+            message: 'Login successful'
         });
     } catch (error) {
         console.error(error);

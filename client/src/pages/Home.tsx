@@ -1,19 +1,34 @@
 import NavBar from "@/components/NavBar";
 import { Toaster } from "@/components/ui/toaster";
-import { useState } from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import CLIENT from "@/libs/axios";
+import { useEffect, useState } from "react";
+import { Outlet, useNavigate, } from "react-router-dom";
 
 
 const Home = () => {
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem("token") ?? null);
+  const [user, setUser] = useState<object | null>(null);
+  const navigate = useNavigate();
+  
+  useEffect(() => {    
+    CLIENT.get('/accounts/me').then((res) => {
+      if (!res.data) {
+        navigate("/login")
+      }
+      setUser(res.data)
+    }).catch(() => {
+      navigate('/login')
+    })
+  },[])
+
   return (<>
-    {token ? (
+    {user && (
       <>
         <NavBar />
         <Outlet />
         <Toaster />
       </>
-    ) : <Navigate to={"/login"} />}</>);
+    )}
+  </>);
 
 };
 
