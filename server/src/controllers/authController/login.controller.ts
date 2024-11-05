@@ -64,7 +64,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             res.status(401).json({ message: 'Invalid email or password' });
             return;
         }
-        res.cookie('jwt', token);
+        (req.session as any & { token?: string }).token = token;
         res.status(200).json({
             message: 'Login successful'
         });

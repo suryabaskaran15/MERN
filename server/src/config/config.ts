@@ -12,3 +12,5 @@ export const SESSION_SECRET = process.env.SESSION_SECRET!;
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
 export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
 export const CLIENT_BASE_URL = process.env.CLIENT_BASE_URL!;
+export const REDIS_URL = process.env.REDIS_URL!;
+export const SESSION_EXPIRE_TIME = process.env.SESSION_EXPIRE_TIME!;

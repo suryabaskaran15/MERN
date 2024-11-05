@@ -10,7 +10,7 @@ const Home = () => {
   const navigate = useNavigate();
   
   useEffect(() => {    
-    CLIENT.get('/auth/me').then((res) => {
+    CLIENT.get('/accounts/me').then((res) => {
       if (!res.data) {
         navigate("/login")
       }

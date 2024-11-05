@@ -12,15 +12,6 @@ const authRouter = Router();
 
 authRouter.post("/signup", signUpUser);
 authRouter.post("/login", login);
-authRouter.get('/ping', (req, res) => {
-    res.cookie("jt", "sdgsgsh", {
-        httpOnly: true,
-        secure: false,
-        sameSite:'strict'
-    })
-    res.send({ message: "online" });
-})
-authRouter.get('/me', getUser)
 
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID!,

@@ -2,14 +2,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { Field, Form } from "react-final-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FcGoogle } from "react-icons/fc";
+// import { FcGoogle } from "react-icons/fc";
 import { ModeToggle } from "@/components/theme/ThemeToggler";
 import CLIENT from "@/libs/axios";
 
 
 const Login = () => {
     const navigate = useNavigate();
-    const onSubmit = (value) => {
+    const onSubmit = (value: { email: string;  password:string}) => {
         CLIENT.post("/auth/login", value).then(() => {
             navigate("/")
         })

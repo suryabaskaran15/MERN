@@ -4,7 +4,7 @@ import { JWT_SECRET } from '../config/config';
 
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     // Get the token from the Authorization header
-    const token = req.header('Authorization')?.split(' ')[1];
+    const token = (req.session as any)?.token;
 
     if (!token) {
         return res.status(401).json({ message: 'Access denied. No token provided.' });
